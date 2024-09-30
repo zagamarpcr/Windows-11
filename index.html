@@ -3,16 +3,16 @@
   <meta charset="utf-8"/>
   <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
   <title>
-   PC OS
+   Windows 11 Desktop
   </title>
   <script src="https://cdn.tailwindcss.com">
   </script>
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet"/>
   <style>
-   .menu {
+   .menu, .folder-menu {
     display: none;
    }
-   .menu.active {
+   .menu.active, .folder-menu.active {
     display: block;
    }
   </style>
@@ -26,7 +26,7 @@
    </i>
    <i class="fab fa-windows text-gray-600 mx-2">
    </i>
-   <i class="fas fa-folder text-gray-600 mx-2">
+   <i class="fas fa-folder text-gray-600 mx-2 cursor-pointer" onclick="toggleFolderMenu()">
    </i>
    <i class="fas fa-store text-gray-600 mx-2">
    </i>
@@ -55,9 +55,39 @@
     </li>
    </ul>
   </div>
+  <div class="folder-menu absolute bottom-20 left-1/2 transform -translate-x-1/2 bg-white bg-opacity-90 backdrop-blur-md p-4 rounded-lg shadow-lg w-64">
+   <div class="border-b pb-2 mb-2">
+    <i class="fas fa-folder-open mr-2">
+    </i>
+    My Folder
+   </div>
+   <ul>
+    <li class="py-2 px-4 hover:bg-gray-200 cursor-pointer" onclick="openFile('games/doom/Titlescreen.html')">
+     <i class="fas fa-file-alt mr-2">
+     </i>
+     Doom.exe
+    </li>
+    <li class="py-2 px-4 hover:bg-gray-200 cursor-pointer">
+     <i class="fas fa-file-alt mr-2">
+     </i>
+     Example.txt
+    </li>
+    <li class="py-2 px-4 hover:bg-gray-200 cursor-pointer">
+     <i class="fas fa-file-alt mr-2">
+     </i>
+     Notes.docx
+    </li>
+   </ul>
+  </div>
   <script>
    function toggleMenu() {
     document.querySelector('.menu').classList.toggle('active');
+   }
+   function toggleFolderMenu() {
+    document.querySelector('.folder-menu').classList.toggle('active');
+   }
+   function openFile(path) {
+    window.location.href = path;
    }
   </script>
  </body>
