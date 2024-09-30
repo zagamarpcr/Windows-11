@@ -1,25 +1,4 @@
-// game.js -- the logic for the game objects
 
-// Copyright (C) 2019, Nicholas Carlini <nicholas@carlini.com>.
-//
-// This program is free software: you can redistribute it and/or modify
-// it under the terms of the GNU General Public License as published by
-// the Free Software Foundation, either version 3 of the License, or
-// (at your option) any later version.
-//
-// This program is distributed in the hope that it will be useful,
-// but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-// GNU General Public License for more details.
-//
-// You should have received a copy of the GNU General Public License
-// along with this program.  If not, see <http://www.gnu.org/licenses/>.
-
-
-/* A hitbox that is something that can be collided with.
- * When a collision happens, it proxies the collision to the parent node.
- * This way any given node can have multiple boxes to collide with.
- */ 
 class HitBox {
     constructor(parent, theta, width, height, offset) {
         if (parent instanceof Vector) { this.dead = true; this.position=ZERO; parent=this; theta=0; width=0; height=0; } // DEBUGONLY

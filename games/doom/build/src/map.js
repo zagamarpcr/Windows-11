@@ -1,29 +1,4 @@
-// map.js -- store, uncompress, and load the game maps
 
-// Copyright (C) 2019, Nicholas Carlini <nicholas@carlini.com>.
-//
-// This program is free software: you can redistribute it and/or modify
-// it under the terms of the GNU General Public License as published by
-// the Free Software Foundation, either version 3 of the License, or
-// (at your option) any later version.
-//
-// This program is distributed in the hope that it will be useful,
-// but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-// GNU General Public License for more details.
-//
-// You should have received a copy of the GNU General Public License
-// along with this program.  If not, see <http://www.gnu.org/licenses/>.
-
-
-/* The map is represented as a collection of n-sided non-convex polygons.
- * When two polygons share a complete edge then it is possible to move
- * from one polygonal map region to the other. 
- * Otherwise, there is a wall between them.
- *
- * Maps are stored compressed with a turtle-graphics like program,
- * implemented and documented below.
- */
 class Map {
     constructor() {
         this.levels = [
