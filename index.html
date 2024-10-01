@@ -9,11 +9,24 @@
   </script>
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet"/>
   <style>
-   .menu, .folder-menu {
+   .menu, .rectangle {
     display: none;
    }
-   .menu.active, .folder-menu.active {
+   .menu.active, .rectangle.active {
     display: block;
+   }
+   .fade-in-up {
+    animation: fadeInUp 0.3s ease-in-out;
+   }
+   @keyframes fadeInUp {
+    from {
+     opacity: 0;
+     transform: translateY(20px);
+    }
+    to {
+     opacity: 1;
+     transform: translateY(0);
+    }
    }
   </style>
  </head>
@@ -21,12 +34,12 @@
   <div class="flex justify-center items-center mb-4">
    <img alt="Windows 11 background with blue abstract shapes" class="absolute inset-0 w-full h-full object-cover" height="1080" src="images/Win11Background.jpg" width="1920"/>
   </div>
-  <div class="relative z-10 flex justify-center items-center bg-white bg-opacity-50 backdrop-blur-md py-2 px-4 rounded-full mx-auto mb-4">
+  <div class="relative z-20 flex justify-center items-center bg-white bg-opacity-50 backdrop-blur-md py-2 px-4 rounded-full mx-auto mb-4">
    <i class="fas fa-search text-gray-600 mx-2 cursor-pointer" onclick="toggleMenu()">
    </i>
    <i class="fab fa-windows text-gray-600 mx-2">
    </i>
-   <i class="fas fa-folder text-gray-600 mx-2 cursor-pointer" onclick="toggleFolderMenu()">
+   <i class="fas fa-folder text-gray-600 mx-2 cursor-pointer" onclick="showRectangle()">
    </i>
    <i class="fas fa-store text-gray-600 mx-2">
    </i>
@@ -55,39 +68,18 @@
     </li>
    </ul>
   </div>
-  <div class="folder-menu absolute bottom-20 left-1/2 transform -translate-x-1/2 bg-white bg-opacity-90 backdrop-blur-md p-4 rounded-lg shadow-lg w-64">
-   <div class="border-b pb-2 mb-2">
-    <i class="fas fa-folder-open mr-2">
-    </i>
-    My Folder
+  <div class="rectangle absolute inset-0 flex justify-center items-center z-10 fade-in-up">
+   <div class="bg-white p-4 rounded-lg shadow-lg w-2/3 h-2/3">
    </div>
-   <ul>
-    <li class="py-2 px-4 hover:bg-gray-200 cursor-pointer" onclick="openFile('doom.html')">
-     <i class="fas fa-file-alt mr-2">
-     </i>
-     Doom.exe
-    </li>
-    <li class="py-2 px-4 hover:bg-gray-200 cursor-pointer">
-     <i class="fas fa-file-alt mr-2">
-     </i>
-     Example.txt
-    </li>
-    <li class="py-2 px-4 hover:bg-gray-200 cursor-pointer">
-     <i class="fas fa-file-alt mr-2">
-     </i>
-     Notes.docx
-    </li>
-   </ul>
   </div>
   <script>
    function toggleMenu() {
     document.querySelector('.menu').classList.toggle('active');
    }
-   function toggleFolderMenu() {
-    document.querySelector('.folder-menu').classList.toggle('active');
-   }
-   function openFile(path) {
-    window.location.href = path;
+   function showRectangle() {
+    const rectangle = document.querySelector('.rectangle');
+    rectangle.classList.add('fade-in-up');
+    rectangle.classList.add('active');
    }
   </script>
  </body>
