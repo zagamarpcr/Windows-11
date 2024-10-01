@@ -18,15 +18,53 @@
    .fade-in-up {
     animation: fadeInUp 0.3s ease-in-out;
    }
+   .fade-out-down {
+    animation: fadeOutDown 0.3s ease-in-out;
+   }
    @keyframes fadeInUp {
     from {
      opacity: 0;
-     transform: translateY(20px);
+     transform: translateY(20px) scale(0.8);
     }
     to {
      opacity: 1;
-     transform: translateY(0);
+     transform: translateY(0) scale(1);
     }
+   }
+   @keyframes fadeOutDown {
+    from {
+     opacity: 1;
+     transform: translateY(0) scale(1);
+    }
+    to {
+     opacity: 0;
+     transform: translateY(20px) scale(0.8);
+    }
+   }
+   .taskbar-icon {
+    position: relative;
+   }
+   .taskbar-icon.active::after {
+    content: '';
+    position: absolute;
+    bottom: -1px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 20px;
+    height: 4px;
+    background-color: gray;
+    border-radius: 2px;
+   }
+   .taskbar-icon.idle::after {
+    content: '';
+    position: absolute;
+    bottom: -1px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 10px;
+    height: 2px;
+    background-color: gray;
+    border-radius: 1px;
    }
   </style>
  </head>
@@ -39,8 +77,10 @@
    </i>
    <i class="fab fa-windows text-gray-600 mx-2">
    </i>
-   <i class="fas fa-folder text-gray-600 mx-2 cursor-pointer" onclick="showRectangle()">
-   </i>
+   <div class="taskbar-icon" id="folder-icon" onclick="toggleRectangle()">
+    <i class="fas fa-folder text-gray-600 mx-2 cursor-pointer">
+    </i>
+   </div>
    <i class="fas fa-store text-gray-600 mx-2">
    </i>
   </div>
@@ -68,18 +108,62 @@
     </li>
    </ul>
   </div>
-  <div class="rectangle absolute inset-0 flex justify-center items-center z-10 fade-in-up">
-   <div class="bg-white p-4 rounded-lg shadow-lg w-2/3 h-2/3">
+  <div class="rectangle absolute inset-0 flex justify-center items-center z-10" style="display: none;">
+   <div class="bg-white p-4 rounded-lg shadow-lg w-2/3 h-2/3 relative">
+    <div class="flex justify-end space-x-2 mb-2">
+     <button class="text-gray-600" onclick="closeRectangle()">
+      <i class="fas fa-times"></i>
+     </button>
+     <button class="text-gray-600">
+      <i class="fas fa-square"></i>
+     </button>
+     <button class="text-gray-600" onclick="minimizeRectangle()">
+      <i class="fas fa-minus"></i>
+     </button>
+    </div>
    </div>
   </div>
   <script>
    function toggleMenu() {
     document.querySelector('.menu').classList.toggle('active');
    }
-   function showRectangle() {
+   function toggleRectangle() {
     const rectangle = document.querySelector('.rectangle');
-    rectangle.classList.add('fade-in-up');
-    rectangle.classList.add('active');
+    const folderIcon = document.getElementById('folder-icon');
+    if (rectangle.classList.contains('active')) {
+     rectangle.classList.remove('fade-in-up');
+     rectangle.classList.add('fade-out-down');
+     setTimeout(() => {
+      rectangle.classList.remove('active');
+      rectangle.style.display = 'none';
+      folderIcon.classList.remove('active');
+      folderIcon.classList.add('idle');
+     }, 300);
+    } else {
+     rectangle.classList.remove('fade-out-down');
+     rectangle.classList.add('fade-in-up');
+     rectangle.classList.add('active');
+     rectangle.style.display = 'flex';
+     folderIcon.classList.add('active');
+     folderIcon.classList.remove('idle');
+    }
+   }
+   function closeRectangle() {
+    const rectangle = document.querySelector('.rectangle');
+    const folderIcon = document.getElementById('folder-icon');
+    rectangle.classList.remove('fade-in-up');
+    rectangle.classList.add('fade-out-down');
+    setTimeout(() => {
+     rectangle.classList.remove('active');
+     rectangle.style.display = 'none';
+     folderIcon.classList.remove('active');
+     folderIcon.classList.add('idle');
+    }, 300);
+   }
+   function minimizeRectangle() {
+    const folderIcon = document.getElementById('folder-icon');
+    folderIcon.classList.remove('active');
+    folderIcon.classList.add('idle');
    }
   </script>
  </body>
