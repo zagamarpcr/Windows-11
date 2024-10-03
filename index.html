@@ -110,16 +110,37 @@
   </div>
   <div class="rectangle absolute inset-0 flex justify-center items-center z-10" style="display: none;">
    <div class="bg-white p-4 rounded-lg shadow-lg w-2/3 h-2/3 relative">
-    <div class="flex justify-end space-x-2 mb-2">
-     <button class="text-gray-600" onclick="closeRectangle()">
-      <i class="fas fa-times"></i>
-     </button>
-     <button class="text-gray-600">
-      <i class="fas fa-square"></i>
-     </button>
-     <button class="text-gray-600" onclick="minimizeRectangle()">
-      <i class="fas fa-minus"></i>
-     </button>
+    <div class="flex justify-between items-center mb-2">
+     <div class="flex items-center space-x-2">
+      <i class="fas fa-folder text-gray-600"></i>
+      <span>Folder</span>
+     </div>
+     <div class="flex space-x-2">
+      <button class="text-gray-600" onclick="minimizeRectangle()">
+       <i class="fas fa-minus"></i>
+      </button>
+      <button class="text-gray-600" onclick="closeRectangle()">
+       <i class="fas fa-times"></i>
+      </button>
+     </div>
+    </div>
+    <div class="mt-4">
+     <div class="py-2 px-4 hover:bg-gray-200 cursor-pointer" onclick="openFile('games/doom/doom.html')">
+      <i class="fas fa-file-alt mr-2"></i>
+      Doom.exe
+     </div>
+     <div class="py-2 px-4 hover:bg-gray-200 cursor-pointer" onclick="openFile('games/fps/FPS(WIP).html')">
+      <i class="fas fa-file-alt mr-2"></i>
+      FPS(WIP).exe
+     </div>
+     <div class="py-2 px-4 hover:bg-gray-200 cursor-pointer">
+      <i class="fas fa-file-alt mr-2"></i>
+      Example1.txt
+     </div>
+     <div class="py-2 px-4 hover:bg-gray-200 cursor-pointer">
+      <i class="fas fa-file-alt mr-2"></i>
+      Example2.txt
+     </div>
     </div>
    </div>
   </div>
@@ -164,6 +185,9 @@
     const folderIcon = document.getElementById('folder-icon');
     folderIcon.classList.remove('active');
     folderIcon.classList.add('idle');
+   }
+   function openFile(path) {
+    window.location.href = path;
    }
   </script>
  </body>
