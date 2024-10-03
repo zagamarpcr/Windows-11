@@ -9,10 +9,10 @@
   </script>
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet"/>
   <style>
-   .menu, .rectangle {
+   .menu, .rectangle, .app-window, .shop-window {
     display: none;
    }
-   .menu.active, .rectangle.active {
+   .menu.active, .rectangle.active, .app-window.active, .shop-window.active {
     display: block;
    }
    .fade-in-up {
@@ -81,8 +81,10 @@
     <i class="fas fa-folder text-gray-600 mx-2 cursor-pointer">
     </i>
    </div>
-   <i class="fas fa-store text-gray-600 mx-2">
-   </i>
+   <div class="taskbar-icon" id="shop-icon" onclick="toggleShopWindow()">
+    <i class="fas fa-store text-gray-600 mx-2 cursor-pointer">
+    </i>
+   </div>
   </div>
   <div class="menu absolute bottom-20 left-1/2 transform -translate-x-1/2 bg-white bg-opacity-90 backdrop-blur-md p-4 rounded-lg shadow-lg w-64">
    <ul>
@@ -125,11 +127,11 @@
      </div>
     </div>
     <div class="mt-4">
-     <div class="py-2 px-4 hover:bg-gray-200 cursor-pointer" onclick="openFile('games/doom/doom.html')">
+     <div class="py-2 px-4 hover:bg-gray-200 cursor-pointer" onclick="openAppWindow('doom')">
       <i class="fas fa-file-alt mr-2"></i>
       Doom.exe
      </div>
-     <div class="py-2 px-4 hover:bg-gray-200 cursor-pointer" onclick="openFile('games/fps/FPS(WIP).html')">
+     <div class="py-2 px-4 hover:bg-gray-200 cursor-pointer" onclick="openAppWindow('fps')">
       <i class="fas fa-file-alt mr-2"></i>
       FPS(WIP).exe
      </div>
@@ -142,6 +144,46 @@
       Example2.txt
      </div>
     </div>
+   </div>
+  </div>
+  <div class="shop-window absolute inset-0 flex justify-center items-center z-10" style="display: none;">
+   <div class="bg-white p-4 rounded-lg shadow-lg w-2/3 h-2/3 relative">
+    <div class="flex justify-between items-center mb-2">
+     <div class="flex items-center space-x-2">
+      <i class="fas fa-store text-gray-600"></i>
+      <span>Shop</span>
+     </div>
+     <div class="flex space-x-2">
+      <button class="text-gray-600" onclick="closeShopWindow()">
+       <i class="fas fa-times"></i>
+      </button>
+     </div>
+    </div>
+    <div class="mt-4">
+     <div class="flex items-center justify-between py-2 px-4 hover:bg-gray-200 cursor-pointer">
+      <div class="flex items-center space-x-2">
+       <i class="fab fa-google text-gray-600"></i>
+       <span>Google</span>
+      </div>
+      <button class="bg-blue-500 text-white px-2 py-1 rounded" onclick="installApp('google')">Install</button>
+     </div>
+    </div>
+   </div>
+  </div>
+  <div class="app-window absolute inset-0 flex justify-center items-center z-20" style="display: none;">
+   <div class="bg-white p-4 rounded-lg shadow-lg w-2/3 h-2/3 relative">
+    <div class="flex justify-between items-center mb-2">
+     <div class="flex items-center space-x-2">
+      <i class="fas fa-gamepad text-gray-600"></i>
+      <span id="app-title">App</span>
+     </div>
+     <div class="flex space-x-2">
+      <button class="text-gray-600" onclick="closeAppWindow()">
+       <i class="fas fa-times"></i>
+      </button>
+     </div>
+    </div>
+    <div id="app-content" class="w-full h-full"></div>
    </div>
   </div>
   <script>
@@ -178,16 +220,111 @@
      rectangle.classList.remove('active');
      rectangle.style.display = 'none';
      folderIcon.classList.remove('active');
-     folderIcon.classList.add('idle');
+     folderIcon.classList.remove('idle');
     }, 300);
    }
    function minimizeRectangle() {
+    const rectangle = document.querySelector('.rectangle');
     const folderIcon = document.getElementById('folder-icon');
+    rectangle.classList.remove('active');
+    rectangle.style.display = 'none';
     folderIcon.classList.remove('active');
     folderIcon.classList.add('idle');
    }
-   function openFile(path) {
-    window.location.href = path;
+   function openAppWindow(app) {
+    const appWindow = document.querySelector('.app-window');
+    const appTitle = document.getElementById('app-title');
+    const appContent = document.getElementById('app-content');
+    let content = '';
+    if (app === 'doom') {
+     appTitle.textContent = 'Doom.exe';
+     content = '<iframe src="games/doom/doom.html" class="w-full h-full border-none"></iframe>';
+    } else if (app === 'fps') {
+     appTitle.textContent = 'FPS(WIP).exe';
+     content = '<iframe src="games/fps/FPS(WIP).html" class="w-full h-full border-none"></iframe>';
+    }
+    appContent.innerHTML = content;
+    appWindow.classList.add('fade-in-up');
+    appWindow.classList.add('active');
+    appWindow.style.display = 'flex';
+   }
+   function closeAppWindow() {
+    const appWindow = document.querySelector('.app-window');
+    appWindow.classList.remove('fade-in-up');
+    appWindow.classList.add('fade-out-down');
+    setTimeout(() => {
+     appWindow.classList.remove('active');
+     appWindow.style.display = 'none';
+     document.getElementById('app-content').innerHTML = '';
+    }, 300);
+   }
+   function toggleShopWindow() {
+    const shopWindow = document.querySelector('.shop-window');
+    const shopIcon = document.getElementById('shop-icon');
+    if (shopWindow.classList.contains('active')) {
+     shopWindow.classList.remove('fade-in-up');
+     shopWindow.classList.add('fade-out-down');
+     setTimeout(() => {
+      shopWindow.classList.remove('active');
+      shopWindow.style.display = 'none';
+      shopIcon.classList.remove('active');
+      shopIcon.classList.add('idle');
+     }, 300);
+    } else {
+     shopWindow.classList.remove('fade-out-down');
+     shopWindow.classList.add('fade-in-up');
+     shopWindow.classList.add('active');
+     shopWindow.style.display = 'flex';
+     shopIcon.classList.add('active');
+     shopIcon.classList.remove('idle');
+    }
+   }
+   function closeShopWindow() {
+    const shopWindow = document.querySelector('.shop-window');
+    const shopIcon = document.getElementById('shop-icon');
+    shopWindow.classList.remove('fade-in-up');
+    shopWindow.classList.add('fade-out-down');
+    setTimeout(() => {
+     shopWindow.classList.remove('active');
+     shopWindow.style.display = 'none';
+     shopIcon.classList.remove('active');
+     shopIcon.classList.remove('idle');
+    }, 300);
+   }
+   function installApp(app) {
+    if (app === 'google') {
+     const installButton = event.target;
+     installButton.textContent = 'Installing...';
+     installButton.disabled = true;
+     setTimeout(() => {
+      installButton.textContent = 'Installed';
+      const taskbar = document.querySelector('.relative.z-20.flex.justify-center.items-center');
+      const googleIcon = document.createElement('div');
+      googleIcon.classList.add('taskbar-icon');
+      googleIcon.innerHTML = '<i class="fab fa-google text-gray-600 mx-2 cursor-pointer" onclick="openAppWindow(\'google\')"></i>';
+      taskbar.appendChild(googleIcon);
+     }, 2000);
+    }
+   }
+   function openAppWindow(app) {
+    const appWindow = document.querySelector('.app-window');
+    const appTitle = document.getElementById('app-title');
+    const appContent = document.getElementById('app-content');
+    let content = '';
+    if (app === 'doom') {
+     appTitle.textContent = 'Doom.exe';
+     content = '<iframe src="games/doom/doom.html" class="w-full h-full border-none"></iframe>';
+    } else if (app === 'fps') {
+     appTitle.textContent = 'FPS(WIP).exe';
+     content = '<iframe src="games/fps/FPS(WIP).html" class="w-full h-full border-none"></iframe>';
+    } else if (app === 'google') {
+     appTitle.textContent = 'Google';
+     content = '<iframe src="https://www.google.com" class="w-full h-full border-none"></iframe>';
+    }
+    appContent.innerHTML = content;
+    appWindow.classList.add('fade-in-up');
+    appWindow.classList.add('active');
+    appWindow.style.display = 'flex';
    }
   </script>
  </body>
