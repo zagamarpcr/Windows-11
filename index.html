@@ -66,6 +66,41 @@
     background-color: gray;
     border-radius: 1px;
    }
+   .app-window {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 60%;
+    height: 60%;
+    z-index: 20;
+    display: none;
+   }
+   .app-window.fullscreen {
+    top: 0;
+    left: 0;
+    transform: none;
+    width: 100%;
+    height: 100%;
+    z-index: 30;
+   }
+   .app-window .top-bar {
+    cursor: move;
+    background: #f1f1f1;
+    padding: 10px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid #ccc;
+   }
+   .app-window .top-bar.hidden {
+    display: none;
+   }
+   .app-window .content {
+    width: 100%;
+    height: calc(100% - 40px);
+    overflow: hidden;
+   }
   </style>
  </head>
  <body class="bg-blue-100 flex flex-col justify-end h-screen relative">
@@ -170,21 +205,25 @@
     </div>
    </div>
   </div>
-  <div class="app-window absolute inset-0 flex justify-center items-center z-20" style="display: none;">
-   <div class="bg-white p-4 rounded-lg shadow-lg w-2/3 h-2/3 relative">
-    <div class="flex justify-between items-center mb-2">
-     <div class="flex items-center space-x-2">
-      <i class="fas fa-gamepad text-gray-600"></i>
-      <span id="app-title">App</span>
-     </div>
-     <div class="flex space-x-2">
-      <button class="text-gray-600" onclick="closeAppWindow()">
-       <i class="fas fa-times"></i>
-      </button>
-     </div>
+  <div class="app-window" id="app-window">
+   <div class="top-bar" id="app-top-bar">
+    <div class="flex items-center space-x-2">
+     <i class="fas fa-gamepad text-gray-600"></i>
+     <span id="app-title">App</span>
     </div>
-    <div id="app-content" class="w-full h-full"></div>
+    <div class="flex space-x-2">
+     <button class="text-gray-600" onclick="minimizeAppWindow()">
+      <i class="fas fa-minus"></i>
+     </button>
+     <button class="text-gray-600" onclick="toggleFullscreen()">
+      <i class="fas fa-square"></i>
+     </button>
+     <button class="text-gray-600" onclick="closeAppWindow()">
+      <i class="fas fa-times"></i>
+     </button>
+    </div>
    </div>
+   <div id="app-content" class="content"></div>
   </div>
   <script>
    function toggleMenu() {
@@ -232,7 +271,7 @@
     folderIcon.classList.add('idle');
    }
    function openAppWindow(app) {
-    const appWindow = document.querySelector('.app-window');
+    const appWindow = document.getElementById('app-window');
     const appTitle = document.getElementById('app-title');
     const appContent = document.getElementById('app-content');
     let content = '';
@@ -242,6 +281,9 @@
     } else if (app === 'fps') {
      appTitle.textContent = 'FPS(WIP).exe';
      content = '<iframe src="games/fps/FPS(WIP).html" class="w-full h-full border-none"></iframe>';
+    } else if (app === 'google') {
+     appTitle.textContent = 'Google';
+     content = '<iframe src="https://www.google.com" class="w-full h-full border-none"></iframe>';
     }
     appContent.innerHTML = content;
     appWindow.classList.add('fade-in-up');
@@ -249,7 +291,7 @@
     appWindow.style.display = 'flex';
    }
    function closeAppWindow() {
-    const appWindow = document.querySelector('.app-window');
+    const appWindow = document.getElementById('app-window');
     appWindow.classList.remove('fade-in-up');
     appWindow.classList.add('fade-out-down');
     setTimeout(() => {
@@ -257,6 +299,22 @@
      appWindow.style.display = 'none';
      document.getElementById('app-content').innerHTML = '';
     }, 300);
+   }
+   function minimizeAppWindow() {
+    const appWindow = document.getElementById('app-window');
+    appWindow.classList.remove('active');
+    appWindow.style.display = 'none';
+   }
+   function toggleFullscreen() {
+    const appWindow = document.getElementById('app-window');
+    const appTopBar = document.getElementById('app-top-bar');
+    if (appWindow.classList.contains('fullscreen')) {
+     appWindow.classList.remove('fullscreen');
+     appTopBar.classList.remove('hidden');
+    } else {
+     appWindow.classList.add('fullscreen');
+     appTopBar.classList.add('hidden');
+    }
    }
    function toggleShopWindow() {
     const shopWindow = document.querySelector('.shop-window');
@@ -306,26 +364,45 @@
      }, 2000);
     }
    }
-   function openAppWindow(app) {
-    const appWindow = document.querySelector('.app-window');
-    const appTitle = document.getElementById('app-title');
-    const appContent = document.getElementById('app-content');
-    let content = '';
-    if (app === 'doom') {
-     appTitle.textContent = 'Doom.exe';
-     content = '<iframe src="doom.html" class="w-full h-full border-none"></iframe>';
-    } else if (app === 'fps') {
-     appTitle.textContent = 'FPS(WIP).exe';
-     content = '<iframe src="FPS(WIP).html" class="w-full h-full border-none"></iframe>';
-    } else if (app === 'google') {
-     appTitle.textContent = 'Google';
-     content = '<iframe src="browser.html" class="w-full h-full border-none"></iframe>';
+   // Dragging functionality
+   const appWindow = document.getElementById('app-window');
+   const appTopBar = document.getElementById('app-top-bar');
+   let isDragging = false;
+   let offsetX, offsetY;
+
+   appTopBar.addEventListener('mousedown', (e) => {
+    if (!appWindow.classList.contains('fullscreen')) {
+     isDragging = true;
+     offsetX = e.clientX - appWindow.getBoundingClientRect().left;
+     offsetY = e.clientY - appWindow.getBoundingClientRect().top;
+     document.addEventListener('mousemove', onMouseMove);
+     document.addEventListener('mouseup', onMouseUp);
     }
-    appContent.innerHTML = content;
-    appWindow.classList.add('fade-in-up');
-    appWindow.classList.add('active');
-    appWindow.style.display = 'flex';
+   });
+
+   function onMouseMove(e) {
+    if (isDragging) {
+     appWindow.style.left = `${e.clientX - offsetX}px`;
+     appWindow.style.top = `${e.clientY - offsetY}px`;
+    }
    }
+
+   function onMouseUp() {
+    isDragging = false;
+    document.removeEventListener('mousemove', onMouseMove);
+    document.removeEventListener('mouseup', onMouseUp);
+   }
+
+   // Show top bar when in fullscreen and mouse is at the top
+   document.addEventListener('mousemove', (e) => {
+    if (appWindow.classList.contains('fullscreen')) {
+     if (e.clientY < 50) {
+      appTopBar.classList.remove('hidden');
+     } else {
+      appTopBar.classList.add('hidden');
+     }
+    }
+   });
   </script>
  </body>
 </html>
